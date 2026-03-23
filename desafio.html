@@ -3,689 +3,471 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Desafio Mastery — Deck de Vendas</title>
+<title>Desafio Mastery</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-:root {
-  --bg: #0D0D0F;
-  --bg-alt: #111114;
-  --primary: #6C3FC5;
-  --secondary: #A855F7;
-  --accent-gold: #F59E0B;
-  --text: #FFFFFF;
-  --text-secondary: #A1A1AA;
-  --green: #10B981;
-  --red: #EF4444;
-  --border: rgba(255,255,255,0.08);
-  --glass-bg: rgba(255,255,255,0.05);
-  --glass-border: rgba(255,255,255,0.08);
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0D0D0F;--bg2:#111114;
+  --p:#6C3FC5;--p2:#A855F7;
+  --gold:#F59E0B;--green:#10B981;--red:#EF4444;
+  --txt:#fff;--txt2:#A1A1AA;
+  --border:rgba(255,255,255,.08);
 }
+html,body{width:100%;height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);overflow:hidden;-webkit-font-smoothing:antialiased}
+.deck{width:100%;height:100%;position:relative}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;align-items:center;padding:48px 72px;text-align:center;background:var(--bg)}
+.slide.active{display:flex}
 
-html, body {
-  width: 100%; height: 100%;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  overflow: hidden;
-  -webkit-font-smoothing: antialiased;
-}
+/* NAV */
+.nav-btn{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.07);border:1px solid var(--border);color:#fff;width:48px;height:48px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:100;transition:background .2s}
+.nav-btn:hover{background:rgba(255,255,255,.15)}
+.nav-prev{left:20px}.nav-next{right:20px}
+.progress-bar{position:fixed;bottom:0;left:0;height:3px;background:linear-gradient(90deg,var(--p),var(--p2));transition:width .4s ease;z-index:100}
+.slide-count{position:fixed;bottom:14px;right:20px;font-size:12px;color:var(--txt2);z-index:100}
+.badge-vagas{position:fixed;top:20px;right:20px;background:var(--gold);color:#000;padding:8px 16px;border-radius:20px;font-weight:800;font-size:14px;z-index:100}
 
-/* ─── Slide Container ─── */
-.deck { width: 100%; height: 100%; position: relative; }
+/* TYPOGRAPHY */
+.title{font-size:clamp(48px,6vw,88px);font-weight:900;line-height:1.05;letter-spacing:-2px}
+.title.sm{font-size:clamp(36px,4.5vw,64px)}
+.sub{font-size:clamp(18px,2vw,26px);color:var(--txt2);margin-top:16px;max-width:700px;line-height:1.5}
+.tag{display:inline-block;padding:6px 18px;border-radius:20px;font-size:14px;font-weight:700;margin-bottom:24px}
+.tag-purple{background:rgba(108,63,197,.3);color:var(--p2);border:1px solid var(--p)}
+.tag-gold{background:rgba(245,158,11,.15);color:var(--gold);border:1px solid rgba(245,158,11,.4)}
 
-.slide {
-  position: absolute; inset: 0;
-  display: none; flex-direction: column;
-  justify-content: center; align-items: center;
-  padding: 60px 80px;
-  opacity: 0;
-  transition: opacity .4s ease;
-  overflow-y: auto;
-}
-.slide.active { display: flex; opacity: 1; }
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;max-width:900px;margin-top:32px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;width:100%;max-width:1000px;margin-top:32px}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;width:100%;max-width:1000px;margin-top:32px}
 
-/* ─── Navigation ─── */
-.nav-arrow {
-  position: fixed; top: 50%; transform: translateY(-50%);
-  width: 48px; height: 48px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid var(--glass-border);
-  border-radius: 50%;
-  color: #fff; font-size: 20px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; z-index: 100;
-  transition: background .2s, transform .2s;
-  backdrop-filter: blur(8px);
-  user-select: none;
-}
-.nav-arrow:hover { background: rgba(108,63,197,0.4); transform: translateY(-50%) scale(1.1); }
-.nav-prev { left: 20px; }
-.nav-next { right: 20px; }
+/* CARDS */
+.card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:24px;text-align:left}
+.card-title{font-size:14px;font-weight:700;color:var(--p2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.card-big{font-size:clamp(28px,3.5vw,48px);font-weight:900;color:#fff;line-height:1}
+.card-sub{font-size:14px;color:var(--txt2);margin-top:6px}
+.card-before{font-size:13px;color:var(--red);font-weight:600}
+.card-after{font-size:clamp(24px,3vw,40px);font-weight:900;color:var(--green);line-height:1;margin-top:4px}
+.card-label{font-size:13px;font-weight:700;color:#fff;margin-top:6px}
+.card-niche{font-size:12px;color:var(--txt2)}
 
-.progress-bar {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  height: 3px; background: rgba(255,255,255,0.06);
-  z-index: 100;
-}
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  transition: width .4s ease;
-}
+/* CHECKLIST */
+.checklist{list-style:none;text-align:left;width:100%;max-width:700px;margin-top:24px}
+.checklist li{font-size:clamp(16px,1.8vw,22px);padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.checklist li:last-child{border:none}
+.check-y{color:var(--green);font-size:20px}
+.check-n{color:var(--red);font-size:20px}
 
-.slide-counter {
-  position: fixed; bottom: 14px; right: 28px;
-  font-size: 13px; color: var(--text-secondary);
-  z-index: 100; font-variant-numeric: tabular-nums;
-}
+/* SPLIT */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:32px;width:100%;max-width:900px;margin-top:24px}
+.split-block{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:24px;text-align:left}
+.split-block h3{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.split-block.yes h3{color:var(--green)}
+.split-block.no h3{color:var(--red)}
+.split-block li{font-size:15px;color:var(--txt2);padding:6px 0;border-bottom:1px solid var(--border);list-style:none;display:flex;gap:8px;align-items:flex-start}
+.split-block li:last-child{border:none}
 
-/* ─── Typography ─── */
-.headline {
-  font-size: clamp(32px, 4vw, 52px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
-  text-align: center;
-  margin-bottom: 16px;
-}
-.headline-lg {
-  font-size: clamp(42px, 5.5vw, 72px);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1.05;
-}
-.subtitle {
-  font-size: clamp(18px, 2vw, 24px);
-  font-weight: 500;
-  color: var(--text-secondary);
-  text-align: center;
-  max-width: 800px;
-  line-height: 1.5;
-  margin-bottom: 24px;
-}
-.body-text {
-  font-size: clamp(16px, 1.4vw, 20px);
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.7;
-  max-width: 820px;
-  text-align: center;
-}
+/* CODE METHOD */
+.code-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;width:100%;max-width:1000px;margin-top:32px}
+.code-card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:28px 20px;text-align:center}
+.code-letter{font-size:72px;font-weight:900;background:linear-gradient(135deg,var(--p),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.code-word{font-size:18px;font-weight:800;color:#fff;margin-top:8px}
+.code-desc{font-size:13px;color:var(--txt2);margin-top:6px}
 
-/* ─── Glass Card ─── */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  padding: 32px;
-}
+/* FORMATO */
+.format-list{display:flex;flex-direction:column;gap:16px;width:100%;max-width:700px;margin-top:24px}
+.format-item{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:20px 24px;display:flex;gap:20px;align-items:center;text-align:left}
+.format-icon{font-size:36px;flex-shrink:0}
+.format-text h3{font-size:18px;font-weight:800;color:#fff}
+.format-text p{font-size:14px;color:var(--txt2);margin-top:4px}
 
-/* ─── Grids ─── */
-.grid-2x2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; max-width: 1000px; }
-.grid-3x2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; width: 100%; max-width: 1100px; }
-.grid-3x3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; width: 100%; max-width: 1100px; }
-.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; width: 100%; max-width: 1100px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 1100px; }
+/* OBJEÇÕES */
+.obj-grid{display:flex;flex-direction:column;gap:16px;width:100%;max-width:800px;margin-top:24px}
+.obj-card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:20px 24px;text-align:left}
+.obj-q{font-size:16px;font-weight:700;color:var(--txt2);margin-bottom:8px}
+.obj-a{font-size:15px;color:#fff;line-height:1.5}
 
-/* ─── Badges ─── */
-.badge {
-  display: inline-block;
-  padding: 8px 20px;
-  border-radius: 100px;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-.badge-purple { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; }
-.badge-gold { background: linear-gradient(135deg, #F59E0B, #D97706); color: #000; }
-.badge-green { background: linear-gradient(135deg, #10B981, #059669); color: #fff; }
-.badge-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+/* GARANTIA */
+.garantia-box{background:rgba(108,63,197,.12);border:1px solid rgba(108,63,197,.4);border-radius:20px;padding:40px 48px;max-width:700px;margin-top:24px}
+.garantia-box p{font-size:20px;line-height:1.6;color:#fff}
 
-/* ─── CTA Button ─── */
-.cta-btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 20px 48px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: #fff;
-  font-size: 20px; font-weight: 800;
-  letter-spacing: 0.02em;
-  border: none; border-radius: 14px;
-  cursor: pointer;
-  transition: transform .2s, box-shadow .2s;
-  text-decoration: none;
-  box-shadow: 0 0 40px rgba(108,63,197,0.4);
-}
-.cta-btn:hover { transform: scale(1.04); box-shadow: 0 0 60px rgba(108,63,197,0.6); }
+/* INVESTIMENTO */
+.preco-big{font-size:clamp(56px,8vw,100px);font-weight:900;background:linear-gradient(135deg,var(--p),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.incluso{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:24px;max-width:700px;width:100%}
+.incluso-item{font-size:14px;color:var(--txt2);display:flex;align-items:center;gap:8px;text-align:left}
+.incluso-item .ic{color:var(--green);font-size:16px}
 
-/* ─── Card helpers ─── */
-.card-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: #fff; }
-.card-body { font-size: 15px; font-weight: 400; color: var(--text-secondary); line-height: 1.6; }
-.card-number { font-size: clamp(28px, 3vw, 40px); font-weight: 900; color: var(--secondary); margin-bottom: 8px; }
+/* INCENTIVO */
+.incentivo-box{background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(245,158,11,.05));border:1px solid rgba(245,158,11,.4);border-radius:20px;padding:40px 56px;margin-top:24px;max-width:700px}
+.incentivo-num{font-size:clamp(56px,7vw,88px);font-weight:900;color:var(--gold);line-height:1}
 
-.icon-circle {
-  width: 56px; height: 56px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 14px;
-  background: linear-gradient(135deg, rgba(108,63,197,0.2), rgba(168,85,247,0.15));
-  font-size: 26px;
-  margin-bottom: 16px;
-  flex-shrink: 0;
-}
+/* CTA */
+.cta-btn{display:inline-block;padding:18px 48px;background:linear-gradient(135deg,var(--p),var(--p2));border-radius:50px;font-size:20px;font-weight:800;color:#fff;letter-spacing:.5px;margin-top:32px;cursor:pointer;box-shadow:0 0 40px rgba(108,63,197,.4)}
 
-/* ─── Check / Cross lists ─── */
-.check-list { list-style: none; text-align: left; }
-.check-list li {
-  font-size: clamp(16px, 1.3vw, 20px);
-  padding: 10px 0;
-  display: flex; align-items: flex-start; gap: 14px;
-  line-height: 1.5;
-}
-.check-list .icon { flex-shrink: 0; font-size: 22px; }
-.check-green .icon { color: var(--green); }
-.check-red .icon { color: var(--red); }
+/* RESULTS */
+.res-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:800px;margin-top:24px}
+.res-item{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:12px;text-align:left;font-size:15px;font-weight:500}
+.res-ic{color:var(--green);font-size:20px;flex-shrink:0}
 
-/* ─── Specific slide overrides ─── */
-.slide-cover { background: radial-gradient(ellipse at 50% 40%, rgba(108,63,197,0.25) 0%, transparent 65%), var(--bg); }
-.slide-alt { background: var(--bg-alt); }
-.slide-gold { background: radial-gradient(ellipse at 50% 50%, rgba(245,158,11,0.12) 0%, transparent 60%), var(--bg); }
-.slide-purple-glow { background: radial-gradient(ellipse at 50% 60%, rgba(108,63,197,0.18) 0%, transparent 55%), var(--bg); }
+/* COMMUNITY */
+.comm-num{font-size:clamp(80px,12vw,160px);font-weight:900;background:linear-gradient(135deg,var(--p),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
 
-/* ─── Before / After cards ─── */
-.before-after .before { font-size: 15px; color: var(--text-secondary); text-decoration: line-through; margin-bottom: 4px; }
-.before-after .arrow { color: var(--secondary); font-size: 18px; margin-bottom: 4px; }
-.before-after .after { font-size: clamp(26px, 2.5vw, 36px); font-weight: 900; color: var(--green); }
-.before-after .label { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-top: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+/* COVER */
+.cover-pills{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap;justify-content:center}
+.pill{padding:8px 20px;border-radius:20px;font-size:14px;font-weight:700;background:rgba(108,63,197,.25);border:1px solid var(--p);color:var(--p2)}
 
-/* ─── Objection cards ─── */
-.objection-quote { font-size: 20px; font-weight: 700; color: var(--secondary); margin-bottom: 14px; }
-.objection-answer { font-size: 15px; color: var(--text-secondary); line-height: 1.65; }
+/* INFYNIA */
+.infynia-badge{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.4);border-radius:12px;padding:12px 28px;font-size:18px;font-weight:800;color:var(--green);margin-bottom:20px;display:inline-block}
 
-/* ─── Price ─── */
-.price-big {
-  font-size: clamp(52px, 7vw, 96px);
-  font-weight: 900;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: -0.03em;
-}
-
-/* ─── CODE letters ─── */
-.code-letter {
-  font-size: clamp(48px, 5vw, 72px);
-  font-weight: 900;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1;
-  margin-bottom: 8px;
-}
-
-/* ─── Trophy ─── */
-.trophy { font-size: 72px; margin-bottom: 16px; }
-.gold-number {
-  font-size: clamp(48px, 6vw, 80px);
-  font-weight: 900;
-  color: var(--accent-gold);
-  text-shadow: 0 0 40px rgba(245,158,11,0.3);
-}
-
-/* ─── Big number ─── */
-.big-number {
-  font-size: clamp(80px, 12vw, 160px);
-  font-weight: 900;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1;
-}
-
-/* ─── Guarantee shield ─── */
-.shield { font-size: 64px; margin-bottom: 16px; }
-
-/* ─── Responsive ─── */
-@media (max-width: 768px) {
-  .slide { padding: 40px 24px; }
-  .grid-2x2, .grid-3x2, .grid-3x3, .grid-4, .grid-3 { grid-template-columns: 1fr; }
-  .glass { padding: 20px; }
-  .nav-arrow { width: 38px; height: 38px; font-size: 16px; }
-  .nav-prev { left: 8px; }
-  .nav-next { right: 8px; }
-  .cta-btn { padding: 16px 32px; font-size: 16px; }
-}
-@media (max-width: 768px) and (orientation: portrait) {
-  .grid-3x2 { grid-template-columns: repeat(2, 1fr); }
-}
+/* SLIDE-SPECIFIC */
+.s1-logo{width:56px;height:56px;background:linear-gradient(135deg,var(--p),var(--p2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;margin-bottom:24px}
+.stat-row{display:flex;gap:40px;margin-top:28px;flex-wrap:wrap;justify-content:center}
+.stat{text-align:center}
+.stat-n{font-size:clamp(36px,5vw,64px);font-weight:900;background:linear-gradient(135deg,var(--p),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-l{font-size:13px;color:var(--txt2);margin-top:4px}
 </style>
 </head>
 <body>
 
-<div class="deck" id="deck">
+<div class="badge-vagas">🔥 30 VAGAS</div>
+<button class="nav-btn nav-prev" onclick="go(-1)">&#8249;</button>
+<button class="nav-btn nav-next" onclick="go(1)">&#8250;</button>
+<div class="progress-bar" id="pb"></div>
+<div class="slide-count" id="sc"></div>
 
-  <!-- ═══ SLIDE 1 — COVER ═══ -->
-  <div class="slide slide-cover active" data-slide="1">
-    <div style="position:absolute;top:28px;right:36px;">
-      <span class="badge badge-gold">🔥 30 VAGAS</span>
-    </div>
-    <div style="text-align:center;">
-      <div style="display:inline-block;margin-bottom:24px;">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-          <rect width="48" height="48" rx="12" fill="url(#lg1)"/>
-          <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#fff" font-family="Inter,sans-serif" font-size="20" font-weight="900">M</text>
-          <defs><linearGradient id="lg1" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#6C3FC5"/><stop offset="1" stop-color="#A855F7"/></linearGradient></defs>
-        </svg>
-      </div>
-      <h1 class="headline headline-lg" style="margin-bottom:24px;">DESAFIO MASTERY</h1>
-      <p class="subtitle" style="max-width:700px;">4 meses pra você sair do platô e chegar nos R$100k/mês.</p>
-      <p class="body-text" style="margin-bottom:40px;">Acompanhamento individual. Ferramentas reais. 30 vagas.</p>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <span class="badge badge-purple">4 MESES</span>
-        <span class="badge badge-purple">INDIVIDUAL</span>
-        <span class="badge badge-purple">R$100K/MÊS</span>
-      </div>
-    </div>
+<div class="deck">
+
+<!-- S1: COVER -->
+<div class="slide active">
+  <div class="s1-logo">M</div>
+  <p class="tag tag-purple">Programa de Aceleração</p>
+  <h1 class="title">DESAFIO MASTERY</h1>
+  <p class="sub">4 meses pra você sair do platô e chegar nos R$100k/mês.</p>
+  <div class="cover-pills">
+    <span class="pill">4 Meses</span>
+    <span class="pill">Individual</span>
+    <span class="pill">R$100k/mês</span>
   </div>
+</div>
 
-  <!-- ═══ SLIDE 2 — O PROBLEMA ═══ -->
-  <div class="slide slide-alt" data-slide="2">
-    <h2 class="headline" style="max-width:900px;">Você já tem o produto. Já tem a marca.<br>Mas os R$100k/mês não chegam.</h2>
-    <p class="subtitle">Se você fez o MARCA 7D, já sabe mais que 90% do mercado.<br>Mas saber e executar são coisas muito diferentes.</p>
-    <p class="body-text" style="max-width:780px;">Você aprendeu a criar marca, posicionar, montar loja. Mas na hora de escalar, trava. Um mês vende bem, o outro despenca. O tráfego come a margem. Você tenta de tudo, mas fica girando no mesmo lugar.</p>
-    <br>
-    <p class="body-text" style="max-width:780px;">O problema não é falta de conhecimento. É falta de <strong style="color:#fff;">direção personalizada</strong> pra SUA operação, pro SEU momento.</p>
-    <br>
-    <p class="body-text" style="max-width:780px;">O MARCA 7D te deu a base. Agora você precisa de alguém olhando pro seu negócio de perto e dizendo: <em style="color:var(--secondary);">"faz isso, para com aquilo, ajusta aqui."</em></p>
-    <br>
-    <p class="body-text" style="color:#fff;font-weight:600;">É exatamente isso que o Desafio Mastery faz.</p>
+<!-- S2: PROBLEMA -->
+<div class="slide">
+  <h2 class="title sm">Você já tem o produto.<br>Já tem a marca.<br><span style="color:var(--p2)">Mas os R$100k/mês não chegam.</span></h2>
+  <p class="sub">Saber e executar são coisas muito diferentes.</p>
+  <div class="stat-row" style="margin-top:40px">
+    <div class="stat"><div class="stat-n">📉</div><div class="stat-l">Vendas instáveis</div></div>
+    <div class="stat"><div class="stat-n">📢</div><div class="stat-l">Tráfego come a margem</div></div>
+    <div class="stat"><div class="stat-n">🔄</div><div class="stat-l">Girando no mesmo lugar</div></div>
   </div>
+</div>
 
-  <!-- ═══ SLIDE 3 — QUEM SOMOS ═══ -->
-  <div class="slide" data-slide="3">
-    <h2 class="headline" style="margin-bottom:36px;">A Mastery foi construída sobre resultados reais.<br>Não sobre teoria.</h2>
-    <div class="grid-2x2">
-      <div class="glass">
-        <div class="card-number">🇧🇷 #1</div>
-        <div class="card-title">Maior marca de Óculos Infantis do Brasil</div>
-        <div class="card-body">Em apenas 5 anos, construímos a Sunkids do zero até se tornar a principal marca de óculos infantis do Brasil. <strong style="color:#fff;">+500 mil clientes. +R$90M faturados.</strong></div>
-      </div>
-      <div class="glass">
-        <div class="card-number">🌎</div>
-        <div class="card-title">Marcas Globais</div>
-        <div class="card-body">Somos um grupo de marcas digitais com presença internacional. América Latina e Europa. Não ensinamos o que lemos, ensinamos o que vivemos.</div>
-      </div>
-      <div class="glass">
-        <div class="card-number" style="font-size:32px;">CODE</div>
-        <div class="card-title">Criadores do Método CODE</div>
-        <div class="card-body">O método CODE nasceu da prática. É a metodologia que multiplica por 10 os resultados de marcas físicas e digitais.</div>
-      </div>
-      <div class="glass">
-        <div class="card-number">📈</div>
-        <div class="card-title">Cases em Tempo Real</div>
-        <div class="card-body"><strong style="color:#fff;">GÜM Argentina:</strong> R$550k com 40% de margem em 30 dias.<br><strong style="color:#fff;">Green is Good:</strong> R$1.3M com 25% de margem em 2025. Orçamento inicial de R$5.000. Do zero.</div>
+<!-- S3: QUEM SOMOS -->
+<div class="slide">
+  <h2 class="title sm">A Mastery foi construída<br>sobre <span style="color:var(--p2)">resultados reais.</span></h2>
+  <div class="grid2" style="margin-top:32px">
+    <div class="card">
+      <div class="card-title">Sunkids</div>
+      <div class="card-big">+500k</div>
+      <div class="card-sub">clientes</div>
+      <div class="card-sub" style="margin-top:8px;color:#fff;font-weight:700">R$90M+ faturados<br>Maior marca óculos infantis BR</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Marcas Globais</div>
+      <div class="card-big" style="font-size:32px;margin-top:8px">América Latina + Europa</div>
+      <div class="card-sub" style="margin-top:8px">Não ensinamos o que lemos. Ensinamos o que vivemos.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Método CODE</div>
+      <div class="card-big" style="font-size:28px;margin-top:8px">10x resultados</div>
+      <div class="card-sub" style="margin-top:8px">Metodologia aplicada em marcas físicas e digitais</div>
+    </div>
+    <div class="card" style="border-color:rgba(245,158,11,.3)">
+      <div class="card-title" style="color:var(--gold)">Cases Agora</div>
+      <div style="margin-top:8px;font-size:14px;color:#fff;font-weight:600;line-height:1.6">
+        GÜM Argentina<br><span style="color:var(--green)">R$550k em 30 dias</span><br><br>
+        Green is Good<br><span style="color:var(--green)">R$1.3M em 2025</span>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ═══ SLIDE 4 — CASES DE ALUNOS ═══ -->
-  <div class="slide slide-alt" data-slide="4">
-    <h2 class="headline" style="margin-bottom:8px;">Eles começaram exatamente onde você está agora.</h2>
-    <p class="subtitle" style="margin-bottom:32px;">Resultados reais de quem aplicou o método Mastery.</p>
-    <div class="grid-3x2">
-      <div class="glass before-after" style="text-align:center;">
-        <div class="label">Peach Up · Cosméticos</div>
-        <div class="before">R$5k/mês</div>
-        <div class="arrow">↓</div>
-        <div class="after">R$11M</div>
-      </div>
-      <div class="glass before-after" style="text-align:center;">
-        <div class="label">Alto Calçados · Masculinos</div>
-        <div class="before">R$80k/mês</div>
-        <div class="arrow">↓</div>
-        <div class="after">R$10M</div>
-      </div>
-      <div class="glass before-after" style="text-align:center;">
-        <div class="label">Hidrapure · Saúde e Bem-Estar</div>
-        <div class="before">R$450k/mês</div>
-        <div class="arrow">↓</div>
-        <div class="after">R$16M</div>
-      </div>
-      <div class="glass before-after" style="text-align:center;">
-        <div class="label">Donaris · Semi Joias</div>
-        <div class="before">Zero</div>
-        <div class="arrow">↓</div>
-        <div class="after">R$3.5M</div>
-      </div>
-      <div class="glass before-after" style="text-align:center;">
-        <div class="label">Fio de Afeto · Roupas Infantis</div>
-        <div class="before">R$60k (margem neg.)</div>
-        <div class="arrow">↓</div>
-        <div class="after">R$3M</div>
-      </div>
-      <div class="glass before-after" style="text-align:center;">
-        <div class="label">Beroc · Acessórios Masculinos</div>
-        <div class="before">R$85k/mês</div>
-        <div class="arrow">↓</div>
-        <div class="after">R$1M</div>
-      </div>
+<!-- S4: CASES ALUNOS -->
+<div class="slide">
+  <h2 class="title sm">Eles começaram<br><span style="color:var(--p2)">exatamente onde você está.</span></h2>
+  <div class="grid3" style="margin-top:28px">
+    <div class="card">
+      <div class="card-before">De R$5k/mês</div>
+      <div class="card-after">R$11M</div>
+      <div class="card-label">Peach Up</div>
+      <div class="card-niche">Cosméticos</div>
+    </div>
+    <div class="card">
+      <div class="card-before">De R$80k/mês</div>
+      <div class="card-after">R$10M</div>
+      <div class="card-label">Alto Calçados</div>
+      <div class="card-niche">Calçados Masculinos</div>
+    </div>
+    <div class="card">
+      <div class="card-before">De R$450k/mês</div>
+      <div class="card-after">R$16M</div>
+      <div class="card-label">Hidrapure</div>
+      <div class="card-niche">Saúde e Bem-Estar</div>
+    </div>
+    <div class="card">
+      <div class="card-before">Do zero</div>
+      <div class="card-after">R$3.5M</div>
+      <div class="card-label">Donaris</div>
+      <div class="card-niche">Semi Joias</div>
+    </div>
+    <div class="card">
+      <div class="card-before">R$60k (margem neg)</div>
+      <div class="card-after">R$3M</div>
+      <div class="card-label">Fio de Afeto</div>
+      <div class="card-niche">Roupas Infantis</div>
+    </div>
+    <div class="card">
+      <div class="card-before">De R$85k/mês</div>
+      <div class="card-after">R$1M</div>
+      <div class="card-label">Beroc</div>
+      <div class="card-niche">Acessórios Masculinos</div>
     </div>
   </div>
+</div>
 
-  <!-- ═══ SLIDE 5 — PARA QUEM É ═══ -->
-  <div class="slide" data-slide="5">
-    <h2 class="headline" style="margin-bottom:36px;">Isso aqui é pra você se:</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:1000px;width:100%;">
-      <div class="glass" style="border-left:3px solid var(--green);">
-        <ul class="check-list check-green">
-          <li><span class="icon">✅</span>Você fez o MARCA 7D e já tem produto e marca montados</li>
-          <li><span class="icon">✅</span>Sua loja já vende, mas não chega nos R$100k/mês de forma consistente</li>
-          <li><span class="icon">✅</span>Você sabe que precisa de acompanhamento de perto, não só de curso</li>
-          <li><span class="icon">✅</span>Está disposto a executar pesado nos próximos 4 meses</li>
-          <li><span class="icon">✅</span>Quer alguém experiente olhando pra SUA operação</li>
-        </ul>
-      </div>
-      <div class="glass" style="border-left:3px solid var(--red);">
-        <ul class="check-list check-red">
-          <li><span class="icon">❌</span>NÃO é pra quem ainda não tem produto nem marca</li>
-          <li><span class="icon">❌</span>NÃO é pra quem quer resultado sem colocar a mão na massa</li>
-          <li><span class="icon">❌</span>NÃO é pra quem está buscando fórmula mágica</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ SLIDE 6 — COMO FUNCIONA ═══ -->
-  <div class="slide slide-alt" data-slide="6">
-    <h2 class="headline" style="margin-bottom:36px;">4 meses. Acompanhamento real.<br>Resultado mensurável.</h2>
-    <div class="grid-3">
-      <div class="glass" style="text-align:center;">
-        <div class="icon-circle" style="margin:0 auto 16px;">🎯</div>
-        <div class="card-title">2 Sessões Individuais</div>
-        <div class="card-body">Diagnóstico completo da sua operação e plano de ação personalizado. Não é call genérica: é análise profunda do SEU negócio com direcionamento específico do que fazer, em que ordem, e por quê.</div>
-      </div>
-      <div class="glass" style="text-align:center;">
-        <div class="icon-circle" style="margin:0 auto 16px;">🎬</div>
-        <div class="card-title">Diagnóstico em Vídeo</div>
-        <div class="card-body">Análise gravada com pontos específicos do que ajustar na sua loja, no seu tráfego, nos seus criativos. Você assiste, aplica e revisita quando precisar.</div>
-      </div>
-      <div class="glass" style="text-align:center;">
-        <div class="icon-circle" style="margin:0 auto 16px;">🚨</div>
-        <div class="card-title">Reuniões Pronto-Socorro</div>
-        <div class="card-body">Sessões temáticas de emergência pra destravar rápido. Tráfego travou? Criativo parou de converter? Você tem pra quem ligar.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ SLIDE 7 — INFYNIA ═══ -->
-  <div class="slide slide-purple-glow" data-slide="7">
-    <div style="text-align:center;">
-      <div style="font-size:56px;margin-bottom:12px;">💬</div>
-      <h2 class="headline" style="max-width:800px;">Você vai receber de graça a ferramenta que recupera vendas no automático.</h2>
-      <p class="subtitle">IA de recuperação de vendas via WhatsApp.<br>Grátis durante os 4 meses.</p>
-      <p class="body-text" style="margin-bottom:28px;">Sabe aquele cliente que adicionou no carrinho e sumiu? A Infynia resolve isso. IA que conversa com seus clientes pelo WhatsApp de forma natural, recupera carrinhos abandonados, reengaja quem sumiu.</p>
-      <p class="body-text" style="color:#fff;font-weight:600;margin-bottom:28px;">Isso não é um bônus. É a prova de que a Mastery está comprometida com seu resultado.</p>
-      <span class="badge badge-green" style="font-size:16px;padding:12px 28px;">✨ GRÁTIS POR 4 MESES</span>
-    </div>
-  </div>
-
-  <!-- ═══ SLIDE 8 — GRANDE INCENTIVO ═══ -->
-  <div class="slide slide-gold" data-slide="8">
-    <div style="text-align:center;">
-      <div class="trophy">🏆</div>
-      <h2 class="headline" style="max-width:800px;">Quem mais faturar no Desafio ganha o OP8D. De graça.</h2>
-      <div class="gold-number" style="margin:24px 0;">R$23.000</div>
-      <p class="subtitle" style="color:var(--accent-gold);">em mentoria premium. Custo pra você: zero.</p>
-      <p class="body-text" style="max-width:650px;margin-top:16px;">O Desafio não é só aprendizado. É competição real. Entre os 30 participantes, quem mais faturar nos 4 meses ganha uma vaga no OP8D.</p>
-      <p class="body-text" style="color:#fff;font-weight:600;margin-top:12px;">Sem sorteio. Sem subjetividade. Quem vender mais, leva.</p>
-    </div>
-  </div>
-
-  <!-- ═══ SLIDE 9 — BÔNUS NUVEMSHOP ═══ -->
-  <div class="slide slide-alt" data-slide="9">
-    <div style="text-align:center;">
-      <div style="font-size:56px;margin-bottom:16px;">🔄</div>
-      <h2 class="headline">Parceria oficial NuvemShop:<br>o programa se paga.</h2>
-      <p class="body-text" style="max-width:700px;margin-top:20px;">A NuvemShop é parceira oficial do Desafio Mastery. Ao ativar ou migrar sua loja pra NuvemShop, você recebe de volta o valor investido no programa.</p>
-      <div style="margin:32px 0;">
-        <div class="glass" style="display:inline-block;padding:24px 48px;">
-          <div style="font-size:15px;color:var(--text-secondary);margin-bottom:8px;">Na prática, seu investimento de</div>
-          <div style="font-size:48px;font-weight:900;color:var(--green);">R$4.997</div>
-          <div style="font-size:15px;color:var(--text-secondary);margin-top:8px;">volta pra você.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ SLIDE 10 — MÉTODO CODE ═══ -->
-  <div class="slide" data-slide="10">
-    <h2 class="headline" style="max-width:850px;margin-bottom:8px;">O mesmo método que gerou R$90M pra Sunkids.<br>Aplicado no SEU negócio.</h2>
-    <p class="subtitle" style="margin-bottom:36px;">Conectar. Ofertar. Diferenciar. Escalar.</p>
-    <div class="grid-4">
-      <div class="glass" style="text-align:center;">
-        <div class="code-letter">C</div>
-        <div class="card-title">Conectar</div>
-        <div class="card-body">Tráfego inteligente, público certo.</div>
-      </div>
-      <div class="glass" style="text-align:center;">
-        <div class="code-letter">O</div>
-        <div class="card-title">Ofertar</div>
-        <div class="card-body">Ofertas que vendem, conversão máxima.</div>
-      </div>
-      <div class="glass" style="text-align:center;">
-        <div class="code-letter">D</div>
-        <div class="card-title">Diferenciar</div>
-        <div class="card-body">Sair da guerra de preço.</div>
-      </div>
-      <div class="glass" style="text-align:center;">
-        <div class="code-letter">E</div>
-        <div class="card-title">Escalar</div>
-        <div class="card-body">Crescimento previsível com margem.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ SLIDE 11 — O QUE VOCÊ VAI EXECUTAR ═══ -->
-  <div class="slide slide-alt" data-slide="11">
-    <h2 class="headline" style="margin-bottom:32px;">4 meses de execução focada nessas frentes:</h2>
-    <div class="grid-3x3">
-      <div class="glass" style="text-align:center;padding:24px 20px;">
-        <div style="font-size:32px;margin-bottom:10px;">🔍</div>
-        <div style="font-size:14px;font-weight:600;color:#fff;">Diagnóstico completo da sua operação atual</div>
-      </div>
-      <div class="glass" style="text-align:center;padding:24px 20px;">
-        <div style="font-size:32px;margin-bottom:10px;">📢</div>
-        <div style="font-size:14px;font-weight:600;color:#fff;">Estratégia de tráfego pago personalizada pro seu orçamento</div>
-      </div>
-      <div class="glass" style="text-align:center;padding:24px 20px;">
-        <div style="font-size:32px;margin-bottom:10px;">🎨</div>
-        <div style="font-size:14px;font-weight:600;color:#fff;">Criativos que convertem (não só bonitos)</div>
-      </div>
-      <div class="glass" style="text-align:center;padding:24px 20px;">
-        <div style="font-size:32px;margin-bottom:10px;">🤝</div>
-        <div style="font-size:14px;font-weight:600;color:#fff;">Estratégia de influenciadores (encontrar, negociar, medir)</div>
-      </div>
-      <div class="glass" style="text-align:center;padding:24px 20px;">
-        <div style="font-size:32px;margin-bottom:10px;">💰</div>
-        <div style="font-size:14px;font-weight:600;color:#fff;">Precificação e margem: vender mais E lucrar mais</div>
-      </div>
-      <div class="glass" style="text-align:center;padding:24px 20px;">
-        <div style="font-size:32px;margin-bottom:10px;">🛒</div>
-        <div style="font-size:14px;font-weight:600;color:#fff;">Otimização de loja (conversão, checkout, upsell)</div>
-      </div>
-      <div class="glass" style="text-align:center;padding:24px 20px;">
-        <div style="font-size:32px;margin-bottom:10px;">🔁</div>
-        <div style="font-size:14px;font-weight:600;color:#fff;">Retenção e recompra (email, WhatsApp, pós-venda)</div>
-      </div>
-      <div class="glass" style="text-align:center;padding:24px 20px;">
-        <div style="font-size:32px;margin-bottom:10px;">📊</div>
-        <div style="font-size:14px;font-weight:600;color:#fff;">Análise de métricas: saber o que olhar e ajustar</div>
-      </div>
-      <div class="glass" style="text-align:center;padding:24px 20px;">
-        <div style="font-size:32px;margin-bottom:10px;">🤖</div>
-        <div style="font-size:14px;font-weight:600;color:#fff;">Recuperação de vendas com Infynia no automático</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ SLIDE 12 — RESULTADOS ESPERADOS ═══ -->
-  <div class="slide" data-slide="12">
-    <h2 class="headline" style="margin-bottom:36px;">Onde você pode estar em 4 meses:</h2>
-    <div class="glass" style="max-width:700px;width:100%;">
-      <ul class="check-list check-green">
-        <li><span class="icon">✅</span>Faturando R$100k+ por mês de forma consistente</li>
-        <li><span class="icon">✅</span>Com margem real, sabendo exatamente quanto lucra</li>
-        <li><span class="icon">✅</span>Com tráfego eficiente, sem depender de uma única fonte</li>
-        <li><span class="icon">✅</span>Com criativos que geram venda, não só curtida</li>
-        <li><span class="icon">✅</span>Com a Infynia recuperando vendas no automático 24h por dia</li>
-        <li><span class="icon">✅</span>Com clareza total de próximos passos pra continuar escalando</li>
+<!-- S5: PARA QUEM É -->
+<div class="slide">
+  <h2 class="title sm">Isso aqui é pra você?</h2>
+  <div class="split" style="margin-top:28px">
+    <div class="split-block yes">
+      <h3>✅ SIM, É PRA VOCÊ</h3>
+      <ul>
+        <li><span>✅</span>Fez o MARCA 7D, tem produto e marca</li>
+        <li><span>✅</span>Vende, mas não chega em R$100k/mês</li>
+        <li><span>✅</span>Quer acompanhamento de perto, não só curso</li>
+        <li><span>✅</span>Vai executar pesado pelos próximos 4 meses</li>
       </ul>
     </div>
-    <p class="body-text" style="margin-top:28px;font-size:15px;max-width:650px;">O Desafio não promete milagre. Promete estrutura, direção e acompanhamento pra quem está disposto a fazer o trabalho.</p>
-  </div>
-
-  <!-- ═══ SLIDE 13 — COMUNIDADE ═══ -->
-  <div class="slide slide-alt" data-slide="13">
-    <div style="text-align:center;">
-      <div class="big-number">30</div>
-      <h2 class="headline" style="margin-top:8px;">pessoas. Mesmo nível.<br>Mesmo objetivo. Mesmo prazo.</h2>
-      <p class="subtitle">Você cresce no nível das pessoas que te cercam.</p>
-      <p class="body-text" style="max-width:700px;">O Desafio é um grupo fechado de 30 donos de e-commerce que passaram pelo MARCA 7D e estão no mesmo momento que você. Todos com produto, todos com marca, todos querendo chegar nos R$100k/mês.</p>
-      <br>
-      <p class="body-text" style="max-width:700px;">Troca de experiência, parcerias, fornecedores, estratégias. A competição pelo OP8D puxa o nível de todo mundo pra cima.</p>
-      <div style="margin-top:28px;display:flex;gap:8px;justify-content:center;">
-        <span style="font-size:28px;">👤</span><span style="font-size:28px;">👤</span><span style="font-size:28px;">👤</span>
-        <span style="font-size:28px;opacity:.6;">👤</span><span style="font-size:28px;opacity:.4;">👤</span>
-        <span style="font-size:14px;color:var(--text-secondary);align-self:center;margin-left:4px;">+25</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ SLIDE 14 — OBJEÇÕES ═══ -->
-  <div class="slide" data-slide="14">
-    <h2 class="headline" style="margin-bottom:32px;">Vamos ser diretos sobre as dúvidas<br>que você tem agora.</h2>
-    <div class="grid-3">
-      <div class="glass">
-        <div class="objection-quote">"R$4.997 é caro"</div>
-        <div class="objection-answer">NuvemShop devolve o valor investido. Infynia grátis por 4 meses. E ainda tem chance real de ganhar o OP8D (R$23k). O retorno potencial é absurdo comparado ao investimento.</div>
-      </div>
-      <div class="glass">
-        <div class="objection-quote">"Não tenho tempo"</div>
-        <div class="objection-answer">O formato foi feito pra quem está na operação. Sessões individuais no seu horário. Diagnóstico em vídeo que você assiste quando puder. Pronto-socorro sob demanda. Sem aula ao vivo toda semana.</div>
-      </div>
-      <div class="glass">
-        <div class="objection-quote">"Já tentei mentoria e não funcionou"</div>
-        <div class="objection-answer">Curso genérico não funciona, concordo. Isso aqui é diferente: acompanhamento individual na SUA operação, com quem já fez R$90M em e-commerce. Não é teoria. É alguém olhando pro seu negócio e dizendo o que fazer.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ SLIDE 15 — GARANTIA ═══ -->
-  <div class="slide slide-alt" data-slide="15">
-    <div style="text-align:center;">
-      <div class="shield">🛡️</div>
-      <h2 class="headline" style="max-width:800px;">Compromisso Mastery:<br>resultado ou acompanhamento estendido.</h2>
-      <p class="body-text" style="max-width:700px;margin-top:24px;">Se você participar de todas as sessões, aplicar o que foi orientado e não ver evolução mensurável nos seus números em 4 meses, a equipe Mastery continua acompanhando sua operação sem custo adicional até o resultado aparecer.</p>
-      <p class="body-text" style="color:#fff;font-weight:700;margin-top:20px;font-size:22px;">A gente não larga no meio.</p>
-      <p style="margin-top:24px;font-size:14px;color:var(--text-secondary);">Tudo formalizado em contrato.</p>
-    </div>
-  </div>
-
-  <!-- ═══ SLIDE 16 — INVESTIMENTO E URGÊNCIA ═══ -->
-  <div class="slide slide-purple-glow" data-slide="16">
-    <div style="text-align:center;">
-      <span class="badge badge-gold" style="margin-bottom:20px;">🔥 30 VAGAS · SEM RENOVAÇÃO</span>
-      <h2 class="headline" style="margin-bottom:4px;">Seu investimento</h2>
-      <div class="price-big" style="margin:12px 0;">R$4.997</div>
-      <p class="subtitle" style="margin-bottom:28px;">Quando fechar, fechou.</p>
-    </div>
-    <div class="glass" style="max-width:620px;width:100%;">
-      <ul class="check-list check-green" style="font-size:16px;">
-        <li><span class="icon">✅</span>4 meses de programa intensivo</li>
-        <li><span class="icon">✅</span>2 sessões individuais com a equipe Mastery</li>
-        <li><span class="icon">✅</span>Diagnóstico em vídeo da sua operação</li>
-        <li><span class="icon">✅</span>Reuniões pronto-socorro sob demanda</li>
-        <li><span class="icon">✅</span>Infynia grátis por 4 meses (R$500+ de valor)</li>
-        <li><span class="icon">✅</span>Chance de ganhar OP8D (R$23.000) se for o maior faturamento</li>
-        <li><span class="icon">✅</span>Bônus NuvemShop: valor devolvido</li>
-        <li><span class="icon">✅</span>Grupo fechado com outros 29 donos de e-commerce curados</li>
+    <div class="split-block no">
+      <h3>❌ NÃO É PRA VOCÊ</h3>
+      <ul>
+        <li><span>❌</span>Não tem produto nem marca ainda</li>
+        <li><span>❌</span>Quer resultado sem colocar a mão na massa</li>
+        <li><span>❌</span>Está buscando fórmula mágica</li>
       </ul>
     </div>
-    <div style="margin-top:28px;">
-      <a href="#" class="cta-btn">GARANTIR MINHA VAGA →</a>
-    </div>
   </div>
+</div>
 
-  <!-- ═══ SLIDE 17 — CTA FINAL ═══ -->
-  <div class="slide slide-cover" data-slide="17">
-    <div style="position:absolute;top:28px;right:36px;">
-      <span class="badge badge-gold">🔥 30 VAGAS</span>
+<!-- S6: COMO FUNCIONA -->
+<div class="slide">
+  <h2 class="title sm">4 meses. Acompanhamento real.</h2>
+  <div class="format-list">
+    <div class="format-item">
+      <div class="format-icon">🎯</div>
+      <div class="format-text">
+        <h3>2 Sessões Individuais</h3>
+        <p>Análise do SEU negócio. Plano de ação personalizado. Não é call genérica.</p>
+      </div>
     </div>
-    <div style="text-align:center;">
-      <h2 class="headline headline-lg" style="max-width:800px;">30 vagas.<br>Quando fechar, fechou.</h2>
-      <p class="body-text" style="max-width:680px;margin:24px auto;">Você tem o produto. Tem a marca. Fez o MARCA 7D. O que falta é alguém olhando pro seu negócio de perto nos próximos 4 meses.</p>
-      <p class="body-text" style="max-width:680px;margin:0 auto 32px;">R$4.997 que a NuvemShop devolve. Infynia grátis. Chance real de ganhar R$23k em mentoria.</p>
-      <p style="color:var(--accent-gold);font-size:20px;font-weight:700;margin-bottom:32px;">Garanta sua vaga agora.</p>
-      <a href="#" class="cta-btn" style="font-size:24px;padding:24px 56px;">GARANTIR MINHA VAGA →</a>
+    <div class="format-item">
+      <div class="format-icon">🎥</div>
+      <div class="format-text">
+        <h3>Diagnóstico em Vídeo</h3>
+        <p>Análise gravada da sua operação. O que ajustar, em que ordem, por quê.</p>
+      </div>
+    </div>
+    <div class="format-item">
+      <div class="format-icon">🚨</div>
+      <div class="format-text">
+        <h3>Reuniões Pronto-Socorro</h3>
+        <p>Tráfego travou? Criativo parou? Você tem pra quem ligar. Sob demanda.</p>
+      </div>
     </div>
   </div>
+</div>
+
+<!-- S7: INFYNIA -->
+<div class="slide">
+  <div class="infynia-badge">GRÁTIS por 4 meses</div>
+  <h2 class="title sm">IA que recupera vendas<br><span style="color:var(--green)">no automático.</span></h2>
+  <p class="sub">Enquanto você foca em escalar, a Infynia trabalha 24h recuperando carrinho abandonado, PIX não pago e cartão recusado via WhatsApp.</p>
+  <div class="stat-row" style="margin-top:32px">
+    <div class="stat"><div class="stat-n" style="color:var(--green)">30%</div><div class="stat-l">taxa de recuperação</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--green)">24h</div><div class="stat-l">funcionando</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--green)">R$0</div><div class="stat-l">custo por 4 meses</div></div>
+  </div>
+</div>
+
+<!-- S8: INCENTIVO OP8D -->
+<div class="slide" style="background:linear-gradient(135deg,#0D0D0F 0%,#1a1200 100%)">
+  <p class="tag tag-gold">🏆 Grande Incentivo</p>
+  <h2 class="title sm">Quem mais faturar<br>ganha o OP8D. De graça.</h2>
+  <div class="incentivo-box">
+    <div class="incentivo-num">R$23.000</div>
+    <p style="font-size:16px;color:var(--txt2);margin-top:12px">em mentoria premium — custo pra você: <strong style="color:var(--gold)">zero</strong></p>
+    <p style="font-size:15px;color:#fff;margin-top:16px">Sem sorteio. Sem subjetividade.<br><strong>Quem vender mais, leva.</strong></p>
+  </div>
+</div>
+
+<!-- S9: NUVEMSHOP -->
+<div class="slide">
+  <p class="tag tag-purple">🎁 Bônus Parceiro Oficial</p>
+  <h2 class="title sm">NuvemShop devolve<br><span style="color:var(--p2)">o valor investido.</span></h2>
+  <p class="sub">Ative ou migre sua loja para NuvemShop e receba de volta os R$4.997 do Desafio.</p>
+  <p style="margin-top:24px;font-size:22px;font-weight:800;color:var(--green)">Na prática: o programa se paga.</p>
+</div>
+
+<!-- S10: MÉTODO CODE -->
+<div class="slide">
+  <h2 class="title sm">O método que gerou<br><span style="color:var(--p2)">R$90M pra Sunkids.</span></h2>
+  <div class="code-grid">
+    <div class="code-card">
+      <div class="code-letter">C</div>
+      <div class="code-word">Conectar</div>
+      <div class="code-desc">Tráfego inteligente, público certo</div>
+    </div>
+    <div class="code-card">
+      <div class="code-letter">O</div>
+      <div class="code-word">Ofertar</div>
+      <div class="code-desc">Ofertas que vendem, conversão máxima</div>
+    </div>
+    <div class="code-card">
+      <div class="code-letter">D</div>
+      <div class="code-word">Diferenciar</div>
+      <div class="code-desc">Sair da guerra de preço</div>
+    </div>
+    <div class="code-card">
+      <div class="code-letter">E</div>
+      <div class="code-word">Escalar</div>
+      <div class="code-desc">Crescimento previsível com margem</div>
+    </div>
+  </div>
+</div>
+
+<!-- S11: O QUE VAI EXECUTAR -->
+<div class="slide">
+  <h2 class="title sm">4 meses de execução<br>focada em:</h2>
+  <div class="grid3" style="margin-top:24px;max-width:900px">
+    <div class="card" style="padding:18px;text-align:center"><div style="font-size:28px">🎯</div><div style="font-size:14px;margin-top:8px;font-weight:600">Tráfego pago<br>personalizado</div></div>
+    <div class="card" style="padding:18px;text-align:center"><div style="font-size:28px">🎨</div><div style="font-size:14px;margin-top:8px;font-weight:600">Criativos que<br>convertem</div></div>
+    <div class="card" style="padding:18px;text-align:center"><div style="font-size:28px">📱</div><div style="font-size:14px;margin-top:8px;font-weight:600">Estratégia de<br>influenciadores</div></div>
+    <div class="card" style="padding:18px;text-align:center"><div style="font-size:28px">💰</div><div style="font-size:14px;margin-top:8px;font-weight:600">Precificação<br>e margem</div></div>
+    <div class="card" style="padding:18px;text-align:center"><div style="font-size:28px">🛒</div><div style="font-size:14px;margin-top:8px;font-weight:600">Otimização<br>de loja</div></div>
+    <div class="card" style="padding:18px;text-align:center"><div style="font-size:28px">📊</div><div style="font-size:14px;margin-top:8px;font-weight:600">Métricas que<br>importam</div></div>
+    <div class="card" style="padding:18px;text-align:center"><div style="font-size:28px">📧</div><div style="font-size:14px;margin-top:8px;font-weight:600">Retenção<br>e recompra</div></div>
+    <div class="card" style="padding:18px;text-align:center"><div style="font-size:28px">🤖</div><div style="font-size:14px;margin-top:8px;font-weight:600">Infynia<br>no automático</div></div>
+    <div class="card" style="padding:18px;text-align:center"><div style="font-size:28px">📈</div><div style="font-size:14px;margin-top:8px;font-weight:600">Diagnóstico<br>completo</div></div>
+  </div>
+</div>
+
+<!-- S12: RESULTADOS ESPERADOS -->
+<div class="slide">
+  <h2 class="title sm">Onde você pode estar<br>em <span style="color:var(--green)">4 meses:</span></h2>
+  <div class="res-list">
+    <div class="res-item"><span class="res-ic">✅</span>R$100k+ por mês consistente</div>
+    <div class="res-item"><span class="res-ic">✅</span>Margem real, lucro visível</div>
+    <div class="res-item"><span class="res-ic">✅</span>Tráfego eficiente, múltiplas fontes</div>
+    <div class="res-item"><span class="res-ic">✅</span>Criativos que geram venda</div>
+    <div class="res-item"><span class="res-ic">✅</span>Infynia recuperando 24h/dia</div>
+    <div class="res-item"><span class="res-ic">✅</span>Clareza total de próximos passos</div>
+  </div>
+</div>
+
+<!-- S13: COMUNIDADE -->
+<div class="slide">
+  <h2 class="title sm">Você cresce no nível<br>das pessoas que te cercam.</h2>
+  <div class="comm-num">30</div>
+  <p class="sub">donos de e-commerce. Mesmo nível. Mesmo objetivo. Mesmo prazo.<br>E um incentivando o outro a vender mais.</p>
+</div>
+
+<!-- S14: OBJEÇÕES -->
+<div class="slide">
+  <h2 class="title sm" style="font-size:clamp(32px,3.5vw,48px)">Perguntas que você tem agora.</h2>
+  <div class="obj-grid">
+    <div class="obj-card">
+      <div class="obj-q">"R$4.997 é muito caro."</div>
+      <div class="obj-a">NuvemShop devolve o valor. Infynia grátis. OP8D (R$23k) pra ganhar. O retorno potencial é absurdo.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-q">"Não tenho tempo."</div>
+      <div class="obj-a">2 sessões no seu horário. Diagnóstico em vídeo pra assistir quando puder. Pronto-socorro sob demanda.</div>
+    </div>
+    <div class="obj-card">
+      <div class="obj-q">"Já tentei mentoria e não funcionou."</div>
+      <div class="obj-a">Curso genérico não funciona. Aqui é acompanhamento individual no SEU negócio com quem fez R$90M em e-commerce.</div>
+    </div>
+  </div>
+</div>
+
+<!-- S15: GARANTIA -->
+<div class="slide">
+  <p class="tag tag-purple">🛡️ Compromisso Mastery</p>
+  <h2 class="title sm">A gente não<br><span style="color:var(--p2)">larga no meio.</span></h2>
+  <div class="garantia-box">
+    <p>Se você participar de todas as sessões e aplicar o que foi orientado, e não ver evolução mensurável em 4 meses: <strong>continuamos acompanhando sem custo adicional até o resultado aparecer.</strong></p>
+    <p style="margin-top:16px;font-size:14px;color:var(--txt2)">Tudo formalizado em contrato.</p>
+  </div>
+</div>
+
+<!-- S16: INVESTIMENTO -->
+<div class="slide">
+  <h2 class="title sm">30 vagas. Sem renovação.</h2>
+  <div class="preco-big">R$4.997</div>
+  <div class="incluso">
+    <div class="incluso-item"><span class="ic">✅</span>4 meses de programa</div>
+    <div class="incluso-item"><span class="ic">✅</span>2 sessões individuais</div>
+    <div class="incluso-item"><span class="ic">✅</span>Diagnóstico em vídeo</div>
+    <div class="incluso-item"><span class="ic">✅</span>Reuniões pronto-socorro</div>
+    <div class="incluso-item"><span class="ic">✅</span>Infynia grátis 4 meses</div>
+    <div class="incluso-item"><span class="ic">✅</span>Chance de ganhar OP8D (R$23k)</div>
+    <div class="incluso-item"><span class="ic">✅</span>Bônus NuvemShop</div>
+    <div class="incluso-item"><span class="ic">✅</span>Grupo 30 donos de e-commerce</div>
+  </div>
+</div>
+
+<!-- S17: CTA FINAL -->
+<div class="slide" style="background:linear-gradient(135deg,#0D0D0F 0%,#120a1e 100%)">
+  <h2 class="title">30 vagas.<br>Quando fechar,<br><span style="color:var(--p2)">fechou.</span></h2>
+  <div style="margin-top:28px;font-size:18px;color:var(--txt2);max-width:600px;line-height:1.7">
+    Você tem o produto. Tem a marca. Fez o MARCA 7D.<br>
+    O que falta é alguém olhando pro seu negócio de perto.
+  </div>
+  <div class="cta-btn">GARANTIR MINHA VAGA</div>
+</div>
 
 </div>
 
-<!-- Navigation Arrows -->
-<div class="nav-arrow nav-prev" id="prevBtn" onclick="changeSlide(-1)">‹</div>
-<div class="nav-arrow nav-next" id="nextBtn" onclick="changeSlide(1)">›</div>
-
-<!-- Progress Bar -->
-<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-
-<!-- Slide Counter -->
-<div class="slide-counter" id="slideCounter">1 / 17</div>
-
 <script>
-(function() {
-  const slides = document.querySelectorAll('.slide');
-  const total = slides.length;
-  let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let cur = 0;
 
-  function show(idx) {
-    if (idx < 0 || idx >= total) return;
-    slides[current].classList.remove('active');
-    current = idx;
-    slides[current].classList.add('active');
-    document.getElementById('progressFill').style.width = ((current + 1) / total * 100) + '%';
-    document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + total;
-    document.getElementById('prevBtn').style.opacity = current === 0 ? '0.25' : '1';
-    document.getElementById('nextBtn').style.opacity = current === total - 1 ? '0.25' : '1';
-  }
+function go(dir) {
+  slides[cur].classList.remove('active');
+  cur = (cur + dir + total) % total;
+  slides[cur].classList.add('active');
+  update();
+}
 
-  window.changeSlide = function(dir) { show(current + dir); };
+function update() {
+  document.getElementById('pb').style.width = ((cur+1)/total*100)+'%';
+  document.getElementById('sc').textContent = (cur+1)+' / '+total;
+}
 
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); show(current + 1); }
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); show(current - 1); }
-    if (e.key === 'Home') { e.preventDefault(); show(0); }
-    if (e.key === 'End') { e.preventDefault(); show(total - 1); }
-  });
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key===' ') go(1);
+  if(e.key==='ArrowLeft') go(-1);
+  if(e.key==='Home'){slides[cur].classList.remove('active');cur=0;slides[0].classList.add('active');update();}
+  if(e.key==='End'){slides[cur].classList.remove('active');cur=total-1;slides[cur].classList.add('active');update();}
+});
 
-  // Touch / swipe support
-  let touchStartX = 0;
-  document.addEventListener('touchstart', function(e) { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
-  document.addEventListener('touchend', function(e) {
-    const diff = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(diff) > 50) { diff < 0 ? show(current + 1) : show(current - 1); }
-  }, { passive: true });
+// Touch/swipe
+let tx=0;
+document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);
+document.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>50)go(d>0?1:-1);});
 
-  show(0);
-})();
+update();
 </script>
 </body>
 </html>
