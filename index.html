@@ -134,6 +134,21 @@ body{background:#030509;color:#f0f2ff;font-family:'Inter',sans-serif;overflow-x:
 .cotas-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 @media(max-width:900px){.cotas-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.cotas-grid{grid-template-columns:1fr}}
+/* Mobile: kit grid stacks + global spacing fixes */
+@media(max-width:600px){
+  .kit-grid{grid-template-columns:1fr!important}
+  .section{padding:40px 16px}
+  .hero-section{padding:64px 16px 40px}
+  .hero-title{font-size:clamp(2rem,9vw,3.5rem)!important}
+  .section-title{font-size:clamp(1.4rem,6vw,2.2rem)!important}
+  .stat-grid{grid-template-columns:repeat(2,1fr)!important}
+  .speakers-grid{grid-template-columns:repeat(2,1fr)!important}
+  .prod-specs{grid-template-columns:1fr!important}
+  .audience-grid{grid-template-columns:1fr!important}
+  .slide{min-height:auto!important;padding:60px 20px 48px!important}
+  .cota-exclusive-wrap{padding:36px 20px 32px!important;margin-bottom:32px!important}
+  .cota-exclusive-price{font-size:clamp(3rem,14vw,5rem)!important}
+}
 .cota-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px;transition:border-color .2s,transform .2s}
 .cota-card:hover{transform:translateY(-2px)}
 .cota-card-tier{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
@@ -595,7 +610,7 @@ el.addEventListener('touchend',function(e){var d=e.changedTouches[0].clientX-sx;
       <p style="font-size:.9rem;color:#8892b0;max-width:500px;margin:10px auto 0;line-height:1.6">Material da sua empresa nas mãos de 200–350 founders. Entregue no check-in do evento.<br>
       <span style="font-size:.85rem;color:#E8B84B;margin-top:8px;display:inline-block">📦 O patrocinador produz e entrega os materiais físicos no local. O evento inclui no kit e distribui.</span></p>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:720px;margin:0 auto">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:720px;margin:0 auto" class="kit-grid">
       <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px">
         <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#E8B84B;margin-bottom:14px">📦 Físico</div>
         <ul style="list-style:none">
